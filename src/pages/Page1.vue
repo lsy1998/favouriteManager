@@ -1,35 +1,32 @@
 <template>
-    page1
+    <div class="window-height row  justify-start items-start content-start" id="container">
+        <div class=" col-xl-4 col-md-6 col-xs-12 offset-1 rounded-borders children"></div>
+        <div class=" col-xl-4 col-md-6 col-xs-12 offset-1 rounded-borders children"></div>
+        <div class=" col-xl-4 col-md-6 col-xs-12 offset-1 rounded-borders children"></div>
+        <div class=" col-xl-4 col-md-6 col-xs-12 offset-1 rounded-borders children"></div>
+        <div class=" col-xl-4 col-md-6 col-xs-12 offset-1 rounded-borders children"></div>
+        <div class=" col-xl-4 col-md-6 col-xs-12 offset-1 rounded-borders children"></div>
+        <div class=" col-xl-4 col-md-6 col-xs-12 offset-1 rounded-borders children"></div>
+        <div class=" col-xl-4 col-md-6 col-xs-12 offset-1 rounded-borders children"></div>
+        <div class=" col-xl-4 col-md-6 col-xs-12 offset-1 rounded-borders children"></div>
+      
+
+
+    </div>
 </template>
   
 <script setup lang="ts">
-import { Todo, Meta } from 'components/models';
 import { ref } from 'vue';
-
-const todos = ref<Todo[]>([
-    {
-        id: 1,
-        content: 'ct1'
-    },
-    {
-        id: 2,
-        content: 'ct2'
-    },
-    {
-        id: 3,
-        content: 'ct3'
-    },
-    {
-        id: 4,
-        content: 'ct4'
-    },
-    {
-        id: 5,
-        content: 'ct5'
-    }
-]);
-const meta = ref<Meta>({
-    totalCount: 1200
-});
 </script>
+<style lang="scss" scoped>
+#container{
+    border:1px solid black;
+}
+.children{
+    width: 20em;
+    height: 25em;
+    border:1px solid red;
+    margin-top: 50px;
+}
+</style>
   
