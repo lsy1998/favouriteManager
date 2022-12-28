@@ -38,12 +38,57 @@
 </template>
 
 <script setup lang="ts">
-import { ref,onMounted } from 'vue'
+import { ref, onMounted } from 'vue'
 
 const leftDrawerOpen = ref(true)
 const rightDrawerOpen = ref(true)
+const data = ref([
+  {
+    title: "page1",
+    data: [
+      {
+        folderName: "folder1",
+        data: [
+          {
+            linkTitle: "linkTitle1",
+            link: "link1",
+          }
+        ]
+      }
+    ],
+  },
+  {
+    title: "page2",
+    data: [
+      {
+        folderName: "folder2",
+        data: [
+          {
+            linkTitle: "linkTitle2",
+            link: "link2",
+          }
+        ]
+      }
+    ],
+  },
+  {
+    title: "page3",
+    data: [
+      {
+        folderName: "folder3",
+        data: [
+          {
+            linkTitle: "linkTitle3",
+            link: "link3",
+          }
+        ]
+      }
+    ],
+  },
 
-onMounted(()=>{
+
+])
+onMounted(() => {
   toggleLeftDrawer();
   toggleRightDrawer();
 });

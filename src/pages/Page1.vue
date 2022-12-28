@@ -1,32 +1,74 @@
 <template>
-    <div class="window-height row  justify-start items-start content-start" id="container">
-        <div class=" col-xl-4 col-md-6 col-xs-12 offset-1 rounded-borders children"></div>
-        <div class=" col-xl-4 col-md-6 col-xs-12 offset-1 rounded-borders children"></div>
-        <div class=" col-xl-4 col-md-6 col-xs-12 offset-1 rounded-borders children"></div>
-        <div class=" col-xl-4 col-md-6 col-xs-12 offset-1 rounded-borders children"></div>
-        <div class=" col-xl-4 col-md-6 col-xs-12 offset-1 rounded-borders children"></div>
-        <div class=" col-xl-4 col-md-6 col-xs-12 offset-1 rounded-borders children"></div>
-        <div class=" col-xl-4 col-md-6 col-xs-12 offset-1 rounded-borders children"></div>
-        <div class=" col-xl-4 col-md-6 col-xs-12 offset-1 rounded-borders children"></div>
-        <div class=" col-xl-4 col-md-6 col-xs-12 offset-1 rounded-borders children"></div>
-      
-
-
+    <div class="window-height row justify-start items-start content-start" id="container">
+        <div class=" col-xl-2 col-md-4 col-xs-6 rounded-borders children" v-for="folder in folders">
+            <Folder v-if="folder.type==='folder'" :title="folder.folderName"></Folder>
+            <Link v-if="folder.type==='link'" :title="folder.linkTitle"></Link>
+        </div>
     </div>
 </template>
   
 <script setup lang="ts">
 import { ref } from 'vue';
+import Folder from '../components/Folder.vue'
+import Link from '../components/Link.vue'
+
+const folders = ref([
+    {
+        type: "folder",
+        folderName: "folder1",
+        data: [
+            {
+                linkTitle: "linkTitle1",
+                link: "link1",
+            }
+        ]
+    },
+    {
+        type: "folder",
+        folderName: "folder2",
+        data: [
+            {
+                linkTitle: "linkTitle2",
+                link: "link2",
+            }
+        ]
+    },
+    {
+        type: "folder",
+        folderName: "folder3",
+        data: [
+            {
+                linkTitle: "linkTitle3",
+                link: "link3",
+            }
+        ]
+    },
+    {
+        type: "link",
+        linkTitle: "linkTitle4",
+        link: "link4",
+    },
+    {
+        type: "folder",
+        folderName: "folder4",
+        data: [
+            {
+                linkTitle: "linkTitle4",
+                link: "link4",
+            }
+        ]
+    },
+])
 </script>
 <style lang="scss" scoped>
-#container{
-    border:1px solid black;
+#container {
+    border: 1px solid black;
 }
-.children{
-    width: 20em;
+
+.children {
     height: 25em;
-    border:1px solid red;
     margin-top: 50px;
+    padding: 30px;
 }
 </style>
   
