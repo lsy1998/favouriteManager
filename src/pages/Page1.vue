@@ -12,7 +12,21 @@ import { ref } from 'vue';
 import Folder from '../components/Folder.vue'
 import Link from '../components/Link.vue'
 
-const folders = ref([
+interface linkItem{
+    linkTitle:string,
+    link:string,
+}
+
+interface item{
+    type?:string,
+    folderName?:string,
+    linkTitle?:string,
+    link?:string,
+    data?:linkItem[]
+}
+
+let folders = ref<item[]>([]);
+folders.value = [
     {
         type: "folder",
         folderName: "folder1",
@@ -58,7 +72,7 @@ const folders = ref([
             }
         ]
     },
-])
+];
 </script>
 <style lang="scss" scoped>
 #container {
