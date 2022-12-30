@@ -1,7 +1,7 @@
 <template>
     <div class="window-height row justify-start items-start content-start" id="container">
         <div class=" col-xl-2 col-md-4 col-xs-6 rounded-borders children" v-for="folder in folders">
-            <Folder v-if="folder.type==='folder'" :title="folder.folderName"></Folder>
+            <Folder v-if="folder.type==='folder'" :title="folder.folderName" :data="folder.data"></Folder>
             <Link v-if="folder.type==='link'" :title="folder.linkTitle"></Link>
         </div>
     </div>
@@ -11,19 +11,8 @@
 import { ref } from 'vue';
 import Folder from '../components/Folder.vue'
 import Link from '../components/Link.vue'
-
-interface linkItem{
-    linkTitle:string,
-    link:string,
-}
-
-interface item{
-    type?:string,
-    folderName?:string,
-    linkTitle?:string,
-    link?:string,
-    data?:linkItem[]
-}
+import {item} from '../models/myModel'
+import {useLinkListStore} from '../stores/myStore'
 
 let folders = ref<item[]>([]);
 folders.value = [
@@ -31,7 +20,8 @@ folders.value = [
         type: "folder",
         folderName: "folder1",
         data: [
-            {
+            { 
+                type: "link",
                 linkTitle: "linkTitle1",
                 link: "link1",
             }
@@ -42,6 +32,7 @@ folders.value = [
         folderName: "folder2",
         data: [
             {
+                type: "link",
                 linkTitle: "linkTitle2",
                 link: "link2",
             }
@@ -52,6 +43,7 @@ folders.value = [
         folderName: "folder3",
         data: [
             {
+                type: "link",
                 linkTitle: "linkTitle3",
                 link: "link3",
             }
@@ -67,6 +59,7 @@ folders.value = [
         folderName: "folder4",
         data: [
             {
+                type: "link",
                 linkTitle: "linkTitle4",
                 link: "link4",
             }

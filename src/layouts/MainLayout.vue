@@ -23,11 +23,11 @@
     </q-header>
 
     <q-drawer show-if-above v-model="leftDrawerOpen" side="left" bordered>
-      <!-- drawer content -->
+
     </q-drawer>
 
     <q-drawer show-if-above v-model="rightDrawerOpen" side="right" bordered>
-      <!-- drawer content -->
+      <div v-for="item in linkListData">{{ item.linkTitle }}</div>
     </q-drawer>
 
     <q-page-container>
@@ -38,10 +38,23 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import * as model from '../models/myModel'
+import { ref, onMounted,toRaw } from 'vue'
+import { useLinkListStore } from '../stores/myStore'
+import { storeToRefs } from 'pinia'
 
+const store = useLinkListStore()
+const { linkList } = storeToRefs(store)
 const leftDrawerOpen = ref(true)
 const rightDrawerOpen = ref(true)
+
+let linkListData = ref<model.item[]>([]);
+
+//监听store
+store.$subscribe((mutation, state) => {
+  linkListData.value = toRaw(state).linkList;
+})
+
 const data = ref([
   {
     title: "page1",
@@ -89,6 +102,8 @@ const data = ref([
 
 ])
 onMounted(() => {
+  //toRaw获取proxy原始值
+  linkListData = toRaw(linkList);
   toggleLeftDrawer();
   toggleRightDrawer();
 });
