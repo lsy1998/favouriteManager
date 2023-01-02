@@ -10,6 +10,7 @@ import { onMounted, ref } from 'vue';
 import { item } from '../models/myModel'
 import { useLinkListStore } from '../stores/myStore'
 import { storeToRefs } from 'pinia'
+import { useRouter } from 'vue-router'
 
 interface Props {
     title: string;
@@ -19,6 +20,7 @@ interface Props {
 const props = defineProps<Props>();
 // let data = ref<item[]>([]);
 let data: Array<item> = [];
+let router = useRouter();
 const store = useLinkListStore()
 const { linkList } = storeToRefs(store)
 const linkListData: Array<item> = linkList.value
@@ -28,7 +30,7 @@ onMounted(() => {
 });
 
 function handleClick() {
-    console.log(linkListData);
+    let folderFlag = false;
     store.$patch((state) => {
         state.linkList=[];
     })
@@ -39,8 +41,14 @@ function handleClick() {
                 state.linkList.push(data[i])
             })
         }
+        if (data[i].type == "folder"){
+            folderFlag=true;
+        }
     }
 
+    if(folderFlag){
+        router.push('/page2')
+    }
 }
 
 
