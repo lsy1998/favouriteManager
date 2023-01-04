@@ -8,7 +8,7 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
 import { item } from '../models/myModel'
-import { useLinkListStore } from '../stores/myStore'
+import { useLinkListStore, useFavouriteDataStore } from '../stores/myStore'
 import { storeToRefs } from 'pinia'
 import { useRouter } from 'vue-router'
 
@@ -21,7 +21,8 @@ const props = defineProps<Props>();
 // let data = ref<item[]>([]);
 let data: Array<item> = [];
 let router = useRouter();
-const store = useLinkListStore()
+const store = useLinkListStore();
+const favouriteDataStore = useFavouriteDataStore();
 const { linkList } = storeToRefs(store)
 const linkListData: Array<item> = linkList.value
 
@@ -32,7 +33,7 @@ onMounted(() => {
 function handleClick() {
     let folderFlag = false;
     store.$patch((state) => {
-        state.linkList=[];
+        state.linkList = [];
     })
     data = props.data;
     for (let i = 0; i < data.length; i++) {
@@ -41,13 +42,16 @@ function handleClick() {
                 state.linkList.push(data[i])
             })
         }
-        if (data[i].type == "folder"){
-            folderFlag=true;
+        if (data[i].type == "folder") {
+            folderFlag = true;
         }
     }
 
-    if(folderFlag){
-        router.push('/page2')
+    if (folderFlag) {
+        router.push('/page1')
+        favouriteDataStore.$patch((state) => {
+            state.favouriteData = data
+        })
     }
 }
 

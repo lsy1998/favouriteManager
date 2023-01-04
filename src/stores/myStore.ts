@@ -21,4 +21,24 @@ export const useLinkListStore = defineStore('linkList', {
     },
 });
 
+export const useFavouriteDataStore = defineStore('favouriteData', {
+
+    state: () => ({
+        favouriteData: [] as item[],
+    }),
+    getters: {
+        doubleCount: (state) => {
+            state.favouriteData = [{
+                linkTitle: "linkTitle2",
+                link: "link2"
+            }]
+        }
+    },
+    actions: {
+        increment() {
+            this.favouriteData = [];
+        },
+    },
+});
+
 
