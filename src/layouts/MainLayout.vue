@@ -9,14 +9,14 @@
           <q-avatar>
             <img src="https://cdn.quasar.dev/logo-v2/svg/logo-mono-white.svg">
           </q-avatar>
-          Title
+          收藏夹管理
         </q-toolbar-title>
 
         <q-btn dense flat round icon="menu" @click="toggleRightDrawer" />
       </q-toolbar>
 
       <q-tabs align="left">
-        <q-route-tab to="/page1" label="Page One" />
+        <q-route-tab to="/page1" label="Edge" />
         <q-route-tab to="/page2" label="Page Two" />
         <q-route-tab to="/page3" label="Page Three" />
       </q-tabs>
@@ -97,7 +97,7 @@ store.$subscribe((mutation, state) => {
 
 const data = ref([
   {
-    title: "page1",
+    title: "Edge",
     data: [
       {
         folderName: "folder1",
