@@ -27,7 +27,7 @@
     </q-drawer>
 
     <q-drawer show-if-above v-model="rightDrawerOpen" side="right" bordered>
-      
+
       <q-card flat bordered class="my-card bg-grey-1" v-for="item in linkListData">
       <q-card-section>
         <div class="row items-center no-wrap">
@@ -81,6 +81,7 @@ import * as model from '../models/myModel'
 import { ref, onMounted,toRaw } from 'vue'
 import { useLinkListStore } from '../stores/myStore'
 import { storeToRefs } from 'pinia'
+import { api } from 'boot/axios'
 
 const store = useLinkListStore()
 const { linkList } = storeToRefs(store)
