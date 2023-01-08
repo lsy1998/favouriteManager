@@ -14,6 +14,7 @@ export interface item{
     data?:item[],
     folderId?:number,
     linkId?:number,
+    parentFolderId?:number,
 }
 
 // export interface dbItem{
