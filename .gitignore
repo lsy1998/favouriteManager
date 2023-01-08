@@ -31,3 +31,5 @@ yarn-error.log*
 *.ntvs*
 *.njsproj
 *.sln
+server/__pycache__/web.cpython-310.pyc
+.gitignore
