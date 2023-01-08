@@ -29,7 +29,7 @@
     <q-drawer show-if-above v-model="rightDrawerOpen" side="right" bordered>
 
       <q-card flat bordered class="my-card bg-grey-1" v-for="item in linkListData">
-      <q-card-section>
+      <q-card-section @click="openLink(item.link as string)">
         <div class="row items-center no-wrap">
           <div class="col">
             <div class="text-h6">{{ item.linkTitle }}</div>
@@ -156,5 +156,8 @@ function toggleRightDrawer() {
   rightDrawerOpen.value = !rightDrawerOpen.value
 }
 
-
+function openLink(link:string){
+  // window.location.href=link;
+  window.open(link,'_blank');
+}
 </script>

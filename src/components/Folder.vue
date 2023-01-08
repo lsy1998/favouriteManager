@@ -4,9 +4,9 @@
         {{ props.title }}
     </div>
 </template>
-  
+
 <script setup lang="ts">
-import { onMounted, ref } from 'vue';
+import { onMounted, ref,toRaw } from 'vue';
 import { item } from '../models/myModel'
 import { useLinkListStore, useFavouriteDataStore } from '../stores/myStore'
 import { storeToRefs } from 'pinia'
@@ -35,7 +35,7 @@ function handleClick() {
     store.$patch((state) => {
         state.linkList = [];
     })
-    data = props.data;
+    data = toRaw(props.data);
     for (let i = 0; i < data.length; i++) {
         if (data[i].type == "link") {
             store.$patch((state) => {
@@ -68,4 +68,3 @@ function handleClick() {
     padding: 10px;
 }
 </style>
-  
