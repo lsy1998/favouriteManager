@@ -41,7 +41,7 @@
               <q-menu cover auto-close>
                 <q-list>
                   <q-item clickable>
-                    <q-item-section>Remove Card</q-item-section>
+                    <q-item-section @click="deleteFavourite(item.linkId!=null?item.linkId:-1)">Remove Card</q-item-section>
                   </q-item>
                   <q-item clickable>
                     <q-item-section>Send Feedback</q-item-section>
@@ -159,5 +159,9 @@ function toggleRightDrawer() {
 function openLink(link:string){
   // window.location.href=link;
   window.open(link,'_blank');
+}
+
+function deleteFavourite(id:Number){
+
 }
 </script>
