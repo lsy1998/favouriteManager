@@ -1,5 +1,5 @@
 <template>
-  <div class="window-height row justify-start items-start content-start" id="container">
+  <div class=" row justify-start items-start content-start" id="container">
     <div class=" col-xl-2 col-md-4 col-xs-6 rounded-borders children" v-for="folder in favouriteData">
       <Folder v-if="folder.type === 'folder'" :title="folder.folderName" :data="folder.data"></Folder>
       <Link v-if="folder.type === 'link'" :title="folder.linkTitle">
