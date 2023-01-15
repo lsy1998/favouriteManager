@@ -228,6 +228,15 @@ module.exports = configure(function (/* ctx */) {
         // https://www.electron.build/configuration/configuration
 
         appId: 'quasar-project'
+      },
+      extendElectronMainConf (cfg) {
+        // do something with Esbuild config
+        // for the Electron Main thread
+      },
+
+      extendElectronPreloadConf (cfg) {
+        // do something with Esbuild config
+        // for the Electron Preload thread
       }
     },
 
