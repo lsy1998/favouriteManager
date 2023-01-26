@@ -29,34 +29,31 @@
     <q-drawer show-if-above v-model="rightDrawerOpen" side="right" bordered>
 
       <q-card flat bordered class="my-card bg-grey-1" v-for="item in linkListData">
-      <q-card-section @click="openLink(item.link as string)">
-        <div class="row items-center no-wrap">
-          <div class="col">
-            <div class="text-h6">{{ item.linkTitle }}</div>
-            <div class="text-subtitle2">{{ item.link }}</div>
-          </div>
+        <q-card-section>
+          <div class="row items-center no-wrap">
+            <div class="col" @click="openLink(item.link as string)">
+              <div class="text-h6">{{ item.linkTitle }}</div>
+              <div class="text-subtitle2">{{ item.link }}</div>
+            </div>
 
-          <div class="col-auto">
-            <q-btn color="grey-7" round flat icon="more_vert">
-              <q-menu cover auto-close>
-                <q-list>
-                  <q-item clickable>
-                    <q-item-section @click="deleteFavourite(item.linkId!=null?item.linkId:-1)">Remove Card</q-item-section>
-                  </q-item>
-                  <q-item clickable>
-                    <q-item-section>Send Feedback</q-item-section>
-                  </q-item>
-                  <q-item clickable>
-                    <q-item-section>Share</q-item-section>
-                  </q-item>
-                </q-list>
-              </q-menu>
-            </q-btn>
+            <div class="col-auto">
+              <q-btn color="grey-7" round flat icon="more_vert">
+                <q-menu cover auto-close>
+                  <q-list>
+                    <q-item clickable @click="deleteFavourite(item)">
+                      <q-item-section>删除</q-item-section>
+                    </q-item>
+                    <q-item clickable>
+                      <q-item-section @click="shareFavourite(item)">分享</q-item-section>
+                    </q-item>
+                  </q-list>
+                </q-menu>
+              </q-btn>
+            </div>
           </div>
-        </div>
-      </q-card-section>
+        </q-card-section>
 
-      <!-- <q-card-section>
+        <!-- <q-card-section>
         {{ item.linkTitle }}
       </q-card-section>
 
@@ -66,7 +63,7 @@
         <q-btn flat>Action 1</q-btn>
         <q-btn flat>Action 2</q-btn>
       </q-card-actions> -->
-    </q-card>
+      </q-card>
     </q-drawer>
 
     <q-page-container>
@@ -77,10 +74,11 @@
 </template>
 
 <script setup lang="ts">
-import * as model from '../models/myModel'
-import { ref, onMounted,toRaw } from 'vue'
+import * as models from '../models/myModel'
+import { ref, onMounted, toRaw } from 'vue'
 import { useLinkListStore } from '../stores/myStore'
 import { storeToRefs } from 'pinia'
+import { Notify } from 'quasar'
 import { api } from 'boot/axios'
 
 const store = useLinkListStore()
@@ -88,7 +86,7 @@ const { linkList } = storeToRefs(store)
 const leftDrawerOpen = ref(true)
 const rightDrawerOpen = ref(true)
 
-let linkListData = ref<model.item[]>([]);
+let linkListData = ref<models.item[]>([]);
 
 //监听store
 store.$subscribe((mutation, state) => {
@@ -156,12 +154,35 @@ function toggleRightDrawer() {
   rightDrawerOpen.value = !rightDrawerOpen.value
 }
 
-function openLink(link:string){
+function openLink(link: string) {
   // window.location.href=link;
-  window.open(link,'_blank');
+  window.open(link, '_blank');
 }
 
-function deleteFavourite(id:Number){
+function deleteFavourite(item: models.item) {
 
+}
+
+function shareFavourite(item: models.item) {
+  Notify.setDefaults({
+      position: 'top',
+      textColor: 'white',
+      actions: [{ icon: 'close', color: 'white' }]
+    })
+  if (navigator.share) {
+    navigator.share(
+      {
+        title: item.linkTitle,
+        text: '来自一位帅哥的分享',
+        url: item.link
+      }
+    ).then(() => {
+      // Notify.create('分享成功')
+    }).catch((error) => {
+      Notify.create('分享失败')
+    });
+  } else {
+    Notify.create('该浏览器不支持分享')
+  }
 }
 </script>
