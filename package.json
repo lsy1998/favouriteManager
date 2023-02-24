@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@electron/remote": "^2.0.9",
+    "@naturefw/storage": "^0.2.6",
     "@quasar/cli": "^1.4.0",
     "@quasar/extras": "^1.0.0",
     "axios": "^0.21.1",

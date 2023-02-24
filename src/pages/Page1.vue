@@ -15,7 +15,6 @@ import Link from '../components/Link.vue'
 import { item, dbItem } from '../models/myModel'
 import { useLinkListStore, useFavouriteDataStore } from '../stores/myStore'
 import { api } from 'boot/axios'
-import {db,EDGE_TABLE_NAME,DB_NAME} from '../utils/webDB/index'
 import _ from 'lodash'
 import ErrorNotFound from './ErrorNotFound.vue';
 
@@ -52,23 +51,7 @@ favouriteDataStore.$subscribe((mutation, state) => {
 //   .catch(() => {
 
 //   })
-getDataFromIndexedDB();
-function getDataFromIndexedDB(){
-  console.log(2);
-  var objectStore = db.transaction(DB_NAME).objectStore(EDGE_TABLE_NAME);
-   objectStore.openCursor().onsuccess = function (event) {
-     var cursor = (event.target as any).result;
-     if (cursor) {
-      //如果有数据
-       console.log(cursor.key);
-       console.log( cursor.value.name);
-       cursor.continue();
-    } else {
-      //如果没有数据
-      console.log('没有更多数据了！');
-    }
-  };
-}
+
 
 //处理数据库返回的数据，使其符合供加载的数据的结构
 function getFavouriteData(data: dbItem[], parentFolderId: number): item[] {
