@@ -4,12 +4,12 @@
         {{ props.title }}
     </div>
 </template>
-  
+
 <script setup lang="ts">
 import { computed, ref } from 'vue';
 
 interface Props {
-    title: string;
+    title: string|undefined;
 }
 const props = defineProps<Props>();
 
@@ -24,4 +24,3 @@ const props = defineProps<Props>();
     padding: 10px;
 }
 </style>
-  

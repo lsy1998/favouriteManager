@@ -41,4 +41,10 @@ export const useFavouriteDataStore = defineStore('favouriteData', {
     },
 });
 
+export const useSideBarStore = defineStore('sideBar', {
+  state: () => ({
+      leftSideBar: false as boolean,
+      rightSideBar: false as boolean,
+  })
+});
 

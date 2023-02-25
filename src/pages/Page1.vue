@@ -1,4 +1,21 @@
 <template>
+  <div class="relative-position window-height" v-if="showFileInput">
+    <q-file dense class="absolute-center vertical-middle" input-style="width:300px" clearable color="orange" standout
+      bottom-slots v-model="jsonFile" label="选择edge浏览器bookmark文件" counter>
+      <template v-slot:prepend>
+        <q-icon name="attach_file" />
+      </template>
+      <template v-slot:append>
+        <q-icon name="favorite" />
+      </template>
+      <template v-slot:hint>
+        例如："C:\Users\lsy\AppData\Local\Microsoft\Edge\User Data\Default\Bookmarks"
+      </template>
+      <template v-slot:after>
+        <q-btn @click="readFile">确定</q-btn>
+      </template>
+    </q-file>
+  </div>
   <div class=" row justify-start items-start content-start" id="container">
     <div class=" col-xl-2 col-md-4 col-xs-6 rounded-borders children" v-for="folder in favouriteData">
       <Folder v-if="folder.type === 'folder'" :title="folder.folderName" :data="folder.data"></Folder>
@@ -9,19 +26,51 @@
 </template>
 
 <script setup lang="ts">
-import { ref, toRaw, onMounted } from 'vue';
+import { ref, toRaw, onMounted } from 'vue'
 import Folder from '../components/Folder.vue'
 import Link from '../components/Link.vue'
 import { item, dbItem } from '../models/myModel'
 import { useLinkListStore, useFavouriteDataStore } from '../stores/myStore'
 import { api } from 'boot/axios'
-import _ from 'lodash'
+import * as _ from 'lodash'
 import ErrorNotFound from './ErrorNotFound.vue';
+import dbHelper from '../../src/utils/indexedDB/db'
+import { Notify } from 'quasar'
+
+let helper = dbHelper();
+console.log(helper)
 
 const favouriteDataStore = useFavouriteDataStore();
 const linkListStore = useLinkListStore();
 let favouriteData = ref<item[]>([]);
+let showFileInput = ref<boolean>(false);
+let jsonFile = ref(null);
+let fileDom = ref();
 
+onMounted(() => {
+  let data: item[] = favouriteData.value;
+  let folderData: item[] = [];
+  let linkData: item[] = [];
+  for (let i = 0; i < data.length; i++) {
+    if (data[i].type == "folder") {
+      folderData.push(data[i]);
+    }
+    if (data[i].type == "link") {
+      linkData.push(data[i]);
+    }
+  }
+  favouriteData.value = folderData;
+  linkListStore.$patch((state) => {
+    state.linkList = linkData;
+  })
+  helper.getCount('favouriteMasterData').then((count: any) => {
+    if (count == 0) {
+      showFileInput.value = true;
+    }
+  })
+  console.log(fileDom)
+
+})
 
 favouriteDataStore.$subscribe((mutation, state) => {
   favouriteData.value = toRaw(state).favouriteData;
@@ -103,23 +152,25 @@ function getFavouriteData(data: dbItem[], parentFolderId: number): item[] {
   return data1;
 }
 
-onMounted(() => {
-  let data: item[] = favouriteData.value;
-  let folderData: item[] = [];
-  let linkData: item[] = [];
-  for (let i = 0; i < data.length; i++) {
-    if (data[i].type == "folder") {
-      folderData.push(data[i]);
+function readFile() {
+  console.log(jsonFile.value)
+  let file = jsonFile.value;
+  if (file != null) {
+    let reader = new FileReader();
+    reader.readAsText(file, "UTF-8");
+    reader.onload = () => {
+      let bookmarks = JSON.parse(reader.result as string);
+      console.log(bookmarks);
     }
-    if (data[i].type == "link") {
-      linkData.push(data[i]);
-    }
+  } else {
+    Notify.create({
+      message: '请先选择文件',
+      color: 'red',
+      position: 'bottom'
+    })
   }
-  favouriteData.value = folderData;
-  linkListStore.$patch((state) => {
-    state.linkList = linkData;
-  })
-})
+}
+
 </script>
 <style lang="scss" scoped>
 #container {}

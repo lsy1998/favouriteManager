@@ -23,7 +23,6 @@ try {
 } catch (_) {}
 
 let mainWindow: BrowserWindow | undefined;
-debugger
 
 function createWindow() {
   /**

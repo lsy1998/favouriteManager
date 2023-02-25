@@ -13,8 +13,8 @@ import { storeToRefs } from 'pinia'
 import { useRouter } from 'vue-router'
 
 interface Props {
-    title: string;
-    data: item[]
+    title: string|undefined;
+    data: item[]|undefined
 }
 
 const props = defineProps<Props>();
@@ -35,7 +35,9 @@ function handleClick() {
     store.$patch((state) => {
         state.linkList = [];
     })
-    data = toRaw(props.data);
+    let emptyData:item[]=[];
+    data = toRaw(props.data) as item[];
+
     for (let i = 0; i < data.length; i++) {
         if (data[i].type == "link") {
             store.$patch((state) => {

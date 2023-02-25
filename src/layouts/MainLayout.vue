@@ -52,17 +52,6 @@
             </div>
           </div>
         </q-card-section>
-
-        <!-- <q-card-section>
-        {{ item.linkTitle }}
-      </q-card-section>
-
-      <q-separator />
-
-      <q-card-actions>
-        <q-btn flat>Action 1</q-btn>
-        <q-btn flat>Action 2</q-btn>
-      </q-card-actions> -->
       </q-card>
     </q-drawer>
 
@@ -76,21 +65,26 @@
 <script setup lang="ts">
 import * as models from '../models/myModel'
 import { ref, onMounted, toRaw } from 'vue'
-import { useLinkListStore } from '../stores/myStore'
+import { useLinkListStore,useSideBarStore } from '../stores/myStore'
 import { storeToRefs } from 'pinia'
 import { Notify } from 'quasar'
 import { api } from 'boot/axios'
 
-const store = useLinkListStore()
-const { linkList } = storeToRefs(store)
-const leftDrawerOpen = ref(true)
-const rightDrawerOpen = ref(true)
-
+const linkListStore = useLinkListStore()
+const sideBarStore = useSideBarStore()
+const { linkList } = storeToRefs(linkListStore)
+const { leftSideBar,rightSideBar } = storeToRefs(sideBarStore)
+let leftDrawerOpen = ref(true)
+let rightDrawerOpen = ref(true)
 let linkListData = ref<models.item[]>([]);
 
 //监听store
-store.$subscribe((mutation, state) => {
+linkListStore.$subscribe((mutation, state) => {
   linkListData.value = toRaw(state).linkList;
+})
+sideBarStore.$subscribe((mutation, state) => {
+  leftSideBar.value = toRaw(state).leftSideBar;
+  rightSideBar.value = toRaw(state).rightSideBar;
 })
 
 const data = ref([
@@ -141,9 +135,9 @@ const data = ref([
 ])
 onMounted(() => {
   //toRaw获取proxy原始值
-  linkListData = toRaw(linkList);
-  toggleLeftDrawer();
-  // toggleRightDrawer();
+  linkListData.value = linkList.value;
+  leftDrawerOpen.value = leftSideBar.value;
+  rightDrawerOpen.value = rightSideBar.value;
 });
 
 function toggleLeftDrawer() {
