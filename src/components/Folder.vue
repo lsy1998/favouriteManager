@@ -1,9 +1,30 @@
 <template>
-  <div
-    class="fit row wrap justify-center border-radius-inherit bg-positive text-capitalize text-weight-medium cursor-pointer"
-    @click="handleClick" id="outer">
-    {{ props.title }}
-  </div>
+  <!-- <q-card
+    class="fit row wrap justify-center border-radius-inherit bg-green-8 text-capitalize text-weight-medium cursor-pointer folder-style">
+    <q-card-section>
+      {{ props.title }}
+    </q-card-section>
+    <q-separator />
+    <q-card-actions align="right">
+      <q-btn flat round color="red" icon="favorite" />
+      <q-btn flat round color="teal" icon="bookmark" />
+      <q-btn flat round color="primary" icon="share" />
+    </q-card-actions>
+  </q-card> -->
+  <q-card class="my-card fit folder-style">
+      <q-card-section class="bg-primary text-white cursor-pointer folder-card-section" @click="handleClick" >
+        <div class="text-h6">{{ props.title }}</div>
+        <div class="text-subtitle2">by John Doe</div>
+      </q-card-section>
+
+      <q-separator />
+
+      <q-card-actions align="right" class="folder-card-action">
+        <q-btn flat round color="red" icon="favorite" />
+      <q-btn flat round color="teal" icon="bookmark" />
+      <q-btn flat round color="primary" icon="share" />
+      </q-card-actions>
+    </q-card>
 </template>
 
 <script setup lang="ts">
@@ -78,5 +99,16 @@ function handleClick() {
   word-wrap: break-word;
   word-break: break-all;
   padding: 10px;
+}
+
+.folder-style {
+  color: white;
+  height: 100%;
+}
+.folder-card-section{
+  height: 80%;
+}
+.folder-card-action{
+  height: 20%;
 }
 </style>

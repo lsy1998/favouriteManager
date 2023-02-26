@@ -6,9 +6,7 @@
         <q-btn dense flat round icon="menu" @click="toggleLeftDrawer" />
 
         <q-toolbar-title>
-          <q-avatar>
-            <img src="https://cdn.quasar.dev/logo-v2/svg/logo-mono-white.svg">
-          </q-avatar>
+          <q-icon name="style" size="2em" />
           收藏夹管理
         </q-toolbar-title>
 
@@ -23,22 +21,49 @@
     </q-header>
 
     <q-drawer show-if-above v-model="leftDrawerOpen" side="left" bordered>
+      <q-list bordered padding class="rounded-borders text-primary">
+        <q-item clickable v-ripple :active="link === 'inbox'" @click="link = 'inbox'" active-class="my-menu-link">
+          <q-item-section avatar>
+            <q-icon name="inbox" />
+          </q-item-section>
+          <q-item-section>重置数据</q-item-section>
+        </q-item>
 
+        <q-separator spaced />
+
+        <q-item clickable v-ripple :active="link === 'settings'" @click="link = 'settings'" active-class="my-menu-link">
+          <q-item-section avatar>
+            <q-icon name="settings" />
+          </q-item-section>
+
+          <q-item-section>设置</q-item-section>
+        </q-item>
+
+        <q-item clickable v-ripple :active="link === 'help'" @click="link = 'help'" active-class="my-menu-link">
+          <q-item-section avatar>
+            <q-icon name="help" />
+          </q-item-section>
+
+          <q-item-section>帮助</q-item-section>
+        </q-item>
+      </q-list>
     </q-drawer>
 
     <q-drawer show-if-above v-model="rightDrawerOpen" side="right" bordered>
-
-      <q-card flat bordered class="my-card bg-grey-1" v-for="item in linkListData">
-        <q-card-section>
-          <div class="row items-center no-wrap">
-            <div class="col" @click="openLink(item.link as string)">
-              <div class="text-h6">{{ item.linkTitle }}</div>
-              <div class="text-subtitle2">{{ item.link }}</div>
-            </div>
-
-            <div class="col-auto">
-              <q-btn color="grey-7" round flat icon="more_vert">
-                <q-menu cover auto-close>
+      <q-list>
+        <q-item v-for="item in linkListData">
+          <q-item-section top>
+            <q-item-label lines="1">
+              <span class="text-weight-medium text-primary">{{ item.linkTitle }}</span>
+            </q-item-label>
+            <q-item-label caption lines="1">
+              {{ item.link }}
+            </q-item-label>
+          </q-item-section>
+          <q-item-section top side>
+            <div class="text-grey-8 q-gutter-xs">
+              <q-btn size="12px" flat dense round icon="more_vert" />
+              <q-menu cover auto-close>
                   <q-list>
                     <q-item clickable @click="deleteFavourite(item)">
                       <q-item-section>删除</q-item-section>
@@ -48,11 +73,10 @@
                     </q-item>
                   </q-list>
                 </q-menu>
-              </q-btn>
             </div>
-          </div>
-        </q-card-section>
-      </q-card>
+          </q-item-section>
+        </q-item>
+      </q-list>
     </q-drawer>
 
     <q-page-container>
@@ -65,7 +89,7 @@
 <script setup lang="ts">
 import * as models from '../models/myModel'
 import { ref, onMounted, toRaw } from 'vue'
-import { useLinkListStore,useSideBarStore } from '../stores/myStore'
+import { useLinkListStore, useSideBarStore } from '../stores/myStore'
 import { storeToRefs } from 'pinia'
 import { Notify } from 'quasar'
 import { api } from 'boot/axios'
@@ -73,10 +97,11 @@ import { api } from 'boot/axios'
 const linkListStore = useLinkListStore()
 const sideBarStore = useSideBarStore()
 const { linkList } = storeToRefs(linkListStore)
-const { leftSideBar,rightSideBar } = storeToRefs(sideBarStore)
+const { leftSideBar, rightSideBar } = storeToRefs(sideBarStore)
 let leftDrawerOpen = ref(true)
 let rightDrawerOpen = ref(true)
 let linkListData = ref<models.item[]>([]);
+let link = ref('inbox')
 
 //监听store
 linkListStore.$subscribe((mutation, state) => {
@@ -159,10 +184,10 @@ function deleteFavourite(item: models.item) {
 
 function shareFavourite(item: models.item) {
   Notify.setDefaults({
-      position: 'top',
-      textColor: 'white',
-      actions: [{ icon: 'close', color: 'white' }]
-    })
+    position: 'top',
+    textColor: 'white',
+    actions: [{ icon: 'close', color: 'white' }]
+  })
   if (navigator.share) {
     navigator.share(
       {
@@ -180,3 +205,8 @@ function shareFavourite(item: models.item) {
   }
 }
 </script>
+<style lang="sass">
+.my-menu-link
+  color: white
+  background:$primary
+</style>
