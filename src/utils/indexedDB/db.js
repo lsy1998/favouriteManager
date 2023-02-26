@@ -13,15 +13,16 @@ export default function createDBHelp (callback) {
     stores: {
       favouriteMasterData: { // 演示一下索引的查询。
         id: 'id',
+        autoIncrement: true,
         index: {
           folderName: false,
-          folderId: true,
+          folderId: false,
           folderAddDate:false,
           folderModifiedDate:false,
           linkName:false,
-          linkId:true,
+          linkId:false,
           linkUrl:false,
-          LinkAddDate:false,
+          linkAddDate:false,
           linkModifiedDate:false,
           parentFolderId:false,
         },

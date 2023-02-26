@@ -29,36 +29,27 @@
 import { ref, toRaw, onMounted } from 'vue'
 import Folder from '../components/Folder.vue'
 import Link from '../components/Link.vue'
-import { item, dbItem } from '../models/myModel'
-import { useLinkListStore, useFavouriteDataStore } from '../stores/myStore'
+import { item, edgeBookmark, dbFMDItem } from '../models/myModel'
+import { useLinkListStore, useFavouriteDataStore, useSideBarStore } from '../stores/myStore'
 import { api } from 'boot/axios'
 import * as _ from 'lodash'
 import ErrorNotFound from './ErrorNotFound.vue';
 import dbHelper from '../../src/utils/indexedDB/db'
 import { Notify } from 'quasar'
-
-let helper = dbHelper();
-console.log(helper)
+import { createLogger } from 'vite'
 
 const favouriteDataStore = useFavouriteDataStore();
 const linkListStore = useLinkListStore();
+const sideBarStore = useSideBarStore();
 let favouriteData = ref<item[]>([]);
 let showFileInput = ref<boolean>(false);
 let jsonFile = ref(null);
-let fileDom = ref();
+let helper = dbHelper();
 
 onMounted(() => {
-  let data: item[] = favouriteData.value;
   let folderData: item[] = [];
   let linkData: item[] = [];
-  for (let i = 0; i < data.length; i++) {
-    if (data[i].type == "folder") {
-      folderData.push(data[i]);
-    }
-    if (data[i].type == "link") {
-      linkData.push(data[i]);
-    }
-  }
+
   favouriteData.value = folderData;
   linkListStore.$patch((state) => {
     state.linkList = linkData;
@@ -66,10 +57,20 @@ onMounted(() => {
   helper.getCount('favouriteMasterData').then((count: any) => {
     if (count == 0) {
       showFileInput.value = true;
+    } else {
+      return helper.getList('favouriteMasterData');
     }
+  }).then((bookmarkList: any) => {
+    favouriteData.value = getBookmarkData(bookmarkList, '0')
   })
-  console.log(fileDom)
-
+  for (let i = 0; i < favouriteData.value.length; i++) {
+    if (favouriteData.value[i].type == "folder") {
+      folderData.push(favouriteData.value[i]);
+    }
+    if (favouriteData.value[i].type == "link") {
+      linkData.push(favouriteData.value[i]);
+    }
+  }
 })
 
 favouriteDataStore.$subscribe((mutation, state) => {
@@ -91,76 +92,58 @@ favouriteDataStore.$subscribe((mutation, state) => {
   })
 })
 
-// api.get('/api/getFavouriteData')
-//   .then((response) => {
-//     let data = response.data.data
-//     favouriteData.value = getFavouriteData(data, 0);
-//     console.log(favouriteData)
-//   })
-//   .catch(() => {
-
-//   })
-
-
 //处理数据库返回的数据，使其符合供加载的数据的结构
-function getFavouriteData(data: dbItem[], parentFolderId: number): item[] {
+function getBookmarkData(data: dbFMDItem[], parentFolderId: string): item[] {
   let data1: item[] = [];
-
-  //对于当前目录下子文件夹
-  let folderData: dbItem[] = data.map((i: dbItem): dbItem => {
-    let tempItem: dbItem = {};
-    if (i.PARENT_FOLDER_ID === parentFolderId) {
-      tempItem = { "FOLDER_NAME": i.FOLDER_NAME, "FOLDER_ID": i.FOLDER_ID }
+  let folderData: dbFMDItem[] = [];
+  for (let i in data) {
+    if (data[i].parentFolderId === parentFolderId) {
+      folderData.push(data[i])
     }
-    return tempItem
-  })
-
-  let sortData: dbItem[] = [];
-  let uniqData: dbItem[] = _.uniqBy(folderData, 'FOLDER_NAME')
-  uniqData = _.remove(uniqData, function (n: dbItem): boolean {
-    return n != undefined;
-  })
-
-  sortData = _.sortBy(uniqData, function (item: dbItem): any {
-    return item.FOLDER_NAME;
-  });
-
-  sortData = _.remove(sortData, function (n: dbItem) {
-    return Object.keys(n).length != 0;
-  })
-
-  for (let i = 0; i < sortData.length; i++) {
-    let tempData: item = {};
-    tempData.type = 'folder';
-    tempData.folderName = sortData[i].FOLDER_NAME;
-    tempData.folderId = sortData[i].FOLDER_ID;
-
-    let tempData1: item[] = [];
-    if (tempData.folderId != undefined) {
-      tempData1 = getFavouriteData(_.cloneDeep(data), tempData.folderId);
-    }
-    tempData.data = tempData1;
-    data1.push(tempData);
   }
 
-  //对于当前目录下链接
-  for (let i = 0; i < data.length; i++) {
-    if (data[i].FOLDER_ID === parentFolderId) {
-      data1.push({ folderName: data[i].FOLDER_NAME, folderId: data[i].FOLDER_ID, linkId: data[i].LINK_ID, type: 'link', linkTitle: data[i].LINK_NAME, link: data[i].LINK_URL, parentFolderId: data[i].PARENT_FOLDER_ID, data: [] });
+  for (let i in folderData) {
+    if (folderData[i].folderId != undefined) {
+      //对于当前目录下子文件夹
+      let tempData: item = {};
+      tempData.type = 'folder';
+      tempData.folderName = folderData[i].folderName;
+      tempData.folderId = folderData[i].folderId;
+
+      let tempData1: item[] = [];
+      if (tempData.folderId != undefined) {
+        tempData1 = getBookmarkData(_.cloneDeep(data), tempData.folderId);
+      }
+      tempData.data = tempData1;
+      data1.push(tempData);
+    } else {
+      //对于当前目录下链接
+      data1.push({ folderName: folderData[i].folderName, folderId: '', linkId: folderData[i].linkId, type: 'link', linkTitle: folderData[i].linkName, link: folderData[i].linkUrl, parentFolderId: folderData[i].parentFolderId, data: [] });
     }
   }
   return data1;
 }
 
 function readFile() {
-  console.log(jsonFile.value)
   let file = jsonFile.value;
   if (file != null) {
     let reader = new FileReader();
     reader.readAsText(file, "UTF-8");
     reader.onload = () => {
       let bookmarks = JSON.parse(reader.result as string);
-      console.log(bookmarks);
+      let edgeBookmark: edgeBookmark[] = [];
+      // 主收藏夹
+      edgeBookmark.push(bookmarks.roots.bookmark_bar)
+      // 其他收藏夹
+      edgeBookmark.push(bookmarks.roots.other)
+      // 其他端同步过来的文件夹
+      edgeBookmark.push(bookmarks.roots.synced)
+      // 整理数据
+      let bookmarksData: dbFMDItem[] = getLink(edgeBookmark, '');
+      for (let i in bookmarksData) {
+        bookmarksData[i]['id'] = parseInt(i);
+        helper.addModel('favouriteMasterData', bookmarksData[i]);
+      }
     }
   } else {
     Notify.create({
@@ -170,6 +153,46 @@ function readFile() {
     })
   }
 }
+
+function getLink(data: edgeBookmark[], parentFolderId: string): dbFMDItem[] {
+  let bookmarksDate: dbFMDItem[] = [];
+  if (data.length > 0) {
+    for (let x of data) {
+      let folder: dbFMDItem = {};
+      folder['folderName'] = x['name'];
+      folder['folderId'] = x['id'];
+      folder['parentFolderId'] = parentFolderId;
+      folder['folderAddDate'] = new Date((parseInt(x['date_added'] as string) / 1000000 - 11644473600) * 1000).toString();
+      folder['folderModifiedDate'] = new Date((parseInt(x['date_modified'] as string) / 1000000 - 11644473600) * 1000).toString();
+
+      if (parentFolderId == '') {
+        folder['parentFolderId'] = '0';
+      } else {
+        folder['parentFolderId'] = parentFolderId;
+      }
+      bookmarksDate.push(Object.assign({}, folder));
+      if (x['children'] != undefined) {
+        for (let y of x['children']) {
+          if (y['children'] != undefined && y['children'].length > 0) {
+            bookmarksDate.push(...getLink([y], x['id'] as string));
+          } else {
+            let link: dbFMDItem = {};
+            link['folderName'] = x['name'];
+            link['parentFolderId'] = x['id'];
+            link['linkName'] = y['name'];
+            link['linkAddDate'] = new Date((parseInt(y['date_added'] as string) / 1000000 - 11644473600) * 1000).toString();
+            link['linkModifiedDate'] = '';
+            link['linkId'] = y['id'];
+            link['linkUrl'] = y['url'];
+            bookmarksDate.push(Object.assign({}, link));
+          }
+        }
+      }
+    }
+  }
+  return bookmarksDate;
+}
+
 
 </script>
 <style lang="scss" scoped>

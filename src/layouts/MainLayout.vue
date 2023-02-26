@@ -83,8 +83,8 @@ linkListStore.$subscribe((mutation, state) => {
   linkListData.value = toRaw(state).linkList;
 })
 sideBarStore.$subscribe((mutation, state) => {
-  leftSideBar.value = toRaw(state).leftSideBar;
-  rightSideBar.value = toRaw(state).rightSideBar;
+  leftDrawerOpen.value = toRaw(state).leftSideBar;
+  rightDrawerOpen.value = toRaw(state).rightSideBar;
 })
 
 const data = ref([
