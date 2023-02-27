@@ -52,7 +52,7 @@
     <q-drawer show-if-above v-model="rightDrawerOpen" side="right" bordered>
       <q-list>
         <q-item v-for="item in linkListData">
-          <q-item-section top>
+          <q-item-section top @click="openLink(item.link as string)" class="cursor-pointer">
             <q-item-label lines="1">
               <span class="text-weight-medium text-primary">{{ item.linkTitle }}</span>
             </q-item-label>

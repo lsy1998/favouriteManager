@@ -30,7 +30,7 @@
 <script setup lang="ts">
 import { onMounted, ref, toRaw } from 'vue';
 import { item } from '../models/myModel'
-import { useLinkListStore, useFavouriteDataStore, useSideBarStore } from '../stores/myStore'
+import { useLinkListStore, useFavouriteDataStore, useSideBarStore,useBreadcrumbsStore } from '../stores/myStore'
 import { storeToRefs } from 'pinia'
 import { useRouter } from 'vue-router'
 
@@ -45,6 +45,7 @@ let data: Array<item> = [];
 let router = useRouter();
 const store = useLinkListStore();
 const favouriteDataStore = useFavouriteDataStore();
+const breadcrumbsStore = useBreadcrumbsStore();
 const sideBarStore = useSideBarStore();
 const { linkList } = storeToRefs(store)
 const linkListData: Array<item> = linkList.value
@@ -55,6 +56,13 @@ onMounted(() => {
 
 function handleClick() {
   let folderFlag = false;
+  // 添加一个面包屑
+  breadcrumbsStore.$patch((state) => {
+    state.breadcrumbs.push({
+      folderName:props.title,
+      data:props.data,
+    });
+  })
   store.$patch((state) => {
     state.linkList = [];
   })

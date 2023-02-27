@@ -48,3 +48,9 @@ export const useSideBarStore = defineStore('sideBar', {
   })
 });
 
+export const useBreadcrumbsStore = defineStore('breadcrumbs', {
+  state: () => ({
+    breadcrumbs: [] as item[]
+  })
+});
+
