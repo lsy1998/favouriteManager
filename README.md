@@ -35,3 +35,7 @@ See [Configuring quasar.config.js](https://v2.quasar.dev/quasar-cli-vite/quasar-
 2023年2月26日
 
 ![截图4](https://gitee.com/longsiyu/favourite-manager/raw/master/src/assets/images/screenShot/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20230226221304.png "截图4")
+
+2023年2月27日
+
+![截图5](https://gitee.com/longsiyu/favourite-manager/raw/ede3cdfa58447c1f0f05040a4eb76870f387024e/src/assets/images/screenShot/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20230227230617.png "截图5")
