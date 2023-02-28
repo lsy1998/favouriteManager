@@ -6,7 +6,7 @@
         <q-icon name="attach_file" color="primary" />
       </template>
       <template v-slot:append>
-        <q-icon name="favorite" class="text-red"/>
+        <q-icon name="favorite" class="text-red" />
       </template>
       <template v-slot:hint>
         例如："C:\Users\lsy\AppData\Local\Microsoft\Edge\User Data\Default\Bookmarks"
@@ -17,15 +17,13 @@
     </q-file>
   </div>
   <div class=" row justify-start items-start content-start" id="container">
-    <q-breadcrumbs class="col-xl-12 col-md-12 col-xs-12" >
-      <q-breadcrumbs-el v-for="(item, index) in breadcrumbsPath" :key="index" :label="item.folderName" :icon="index==0?'home':'widgets'" />
-      <!-- <q-breadcrumbs-el label="Components" icon="widgets" />
-      <q-breadcrumbs-el label="Breadcrumbs" /> -->
+    <q-breadcrumbs class="col-xl-12 col-md-12 col-xs-12">
+      <q-breadcrumbs-el v-for="(item, index) in breadcrumbsPath" :key="index" :label="item.folderName"
+        :icon="index == 0 ? 'home' : 'widgets'" @click="clickBreadcrumb(item)" />
     </q-breadcrumbs>
     <div class=" col-xl-2 col-md-4 col-xs-6 rounded-borders children" v-for="folder in favouriteData">
       <Folder v-if="folder.type === 'folder'" :title="folder.folderName" :data="folder.data"></Folder>
-      <Link v-if="folder.type === 'link'" :title="folder.linkTitle">
-      </Link>
+      <!-- <Link v-if="folder.type === 'link'" :title="folder.linkTitle"></Link> -->
     </div>
   </div>
 </template>
@@ -35,7 +33,7 @@ import { ref, toRaw, onMounted } from 'vue'
 import Folder from '../components/Folder.vue'
 import Link from '../components/Link.vue'
 import * as models from '../models/myModel'
-import { useLinkListStore, useFavouriteDataStore, useSideBarStore,useBreadcrumbsStore } from '../stores/myStore'
+import { useLinkListStore, useFavouriteDataStore, useSideBarStore, useBreadcrumbsStore } from '../stores/myStore'
 import { storeToRefs } from 'pinia'
 import { api } from 'boot/axios'
 import * as _ from 'lodash'
@@ -52,7 +50,7 @@ let favouriteData = ref<models.item[]>([]);
 let showFileInput = ref<boolean>(false);
 let jsonFile = ref(null);
 let helper = dbHelper();
-let breadcrumbsPath=ref<models.item[]>([]);
+let breadcrumbsPath = ref<models.item[]>([]);
 console.log('helper :>> ', helper);
 onMounted(() => {
   getBookmarkDataFromIndexedDB();
@@ -60,19 +58,53 @@ onMounted(() => {
   loadBreadcrumbs()
 })
 
-function loadBreadcrumbs(){
-  breadcrumbsStore.$patch((state)=>{
-    state.breadcrumbs=[]
-    state.breadcrumbs.push({
-      folderName:"Edge",
-      data:favouriteData.value
-    })
+function clickBreadcrumb(item: models.item) {
+  //加载文件夹
+  favouriteData.value = item.data as models.item[]
+  //加载右边栏
+  linkListStore.$patch((state) => {
+    state.linkList = []
   })
-  let {breadcrumbs} = storeToRefs(breadcrumbsStore)
-  breadcrumbsPath.value=breadcrumbs.value
+  for (let i = 0; i < favouriteData.value.length; i++) {
+    if (favouriteData.value[i].type == "link") {
+      //如果收藏夹下有链接就用右边栏显示链接
+      sideBarStore.$patch((state) => {
+        state.rightSideBar = true;
+      })
+      linkListStore.$patch((state) => {
+        state.linkList.push(favouriteData.value[i])
+      })
+    }
+  }
+  //修改面包屑
+  breadcrumbsStore.$patch((state) => {
+    let breadcrumbs: models.item[] = []
+    let index: number = 0;
+    for (let i in state.breadcrumbs) {
+      if (state.breadcrumbs[i].folderName === item.folderName) {
+        index = parseInt(i)
+      }
+    }
+    breadcrumbs = _.dropRight(state.breadcrumbs, state.breadcrumbs.length - index - 1)
+    state.breadcrumbs = []
+    state.breadcrumbs.push(...breadcrumbs)
+  })
+
 }
 
-function getBookmarkDataFromIndexedDB(){
+function loadBreadcrumbs() {
+  breadcrumbsStore.$patch((state) => {
+    state.breadcrumbs = []
+    state.breadcrumbs.push({
+      folderName: "Edge",
+      data: favouriteData.value
+    })
+  })
+  let { breadcrumbs } = storeToRefs(breadcrumbsStore)
+  breadcrumbsPath.value = breadcrumbs.value
+}
+
+function getBookmarkDataFromIndexedDB() {
   let folderData: models.item[] = [];
   let linkData: models.item[] = [];
 
@@ -100,7 +132,7 @@ function getBookmarkDataFromIndexedDB(){
 }
 
 breadcrumbsStore.$subscribe((mutation, state) => {
-  breadcrumbsPath.value=state.breadcrumbs
+  breadcrumbsPath.value = state.breadcrumbs
 })
 
 favouriteDataStore.$subscribe((mutation, state) => {
@@ -174,7 +206,7 @@ function readFile() {
         bookmarksData[i]['id'] = parseInt(i);
         helper.addModel('favouriteMasterData', bookmarksData[i]);
       }
-      showFileInput.value=false
+      showFileInput.value = false
       getBookmarkDataFromIndexedDB()
     }
   } else {

@@ -89,7 +89,7 @@ function handleClick() {
   }
 
   if (folderFlag) {
-    router.push('/page1')
+    // router.push('/page1')
     favouriteDataStore.$patch((state) => {
       state.favouriteData = data
     })
