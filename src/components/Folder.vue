@@ -12,27 +12,28 @@
     </q-card-actions>
   </q-card> -->
   <q-card class="my-card fit folder-style">
-      <q-card-section class="bg-primary text-white cursor-pointer folder-card-section" @click="handleClick" >
-        <div class="text-h6">{{ props.title }}</div>
-        <div class="text-subtitle2">by John Doe</div>
-      </q-card-section>
+    <q-card-section class="bg-primary text-white cursor-pointer folder-card-section" @click="handleClick">
+      <div class="text-h6">{{ props.title }}</div>
+      <div class="text-subtitle2">by John Doe</div>
+    </q-card-section>
 
-      <q-separator />
+    <q-separator />
 
-      <q-card-actions align="right" class="folder-card-action">
-        <q-btn flat round color="red" icon="favorite" />
-      <q-btn flat round color="teal" icon="bookmark" />
+    <q-card-actions align="right" class="folder-card-action">
+      <q-btn flat round color="red" icon="favorite" />
+      <q-btn flat round color="teal" icon="send" @click="pushNotification"></q-btn>
       <q-btn flat round color="primary" icon="share" />
-      </q-card-actions>
-    </q-card>
+    </q-card-actions>
+  </q-card>
 </template>
 
 <script setup lang="ts">
 import { onMounted, ref, toRaw } from 'vue';
 import { item } from '../models/myModel'
-import { useLinkListStore, useFavouriteDataStore, useSideBarStore,useBreadcrumbsStore } from '../stores/myStore'
+import { useLinkListStore, useFavouriteDataStore, useSideBarStore, useBreadcrumbsStore } from '../stores/myStore'
 import { storeToRefs } from 'pinia'
 import { useRouter } from 'vue-router'
+import { pushNotifications } from 'electron';
 
 interface Props {
   title: string | undefined;
@@ -59,8 +60,8 @@ function handleClick() {
   // 添加一个面包屑
   breadcrumbsStore.$patch((state) => {
     state.breadcrumbs.push({
-      folderName:props.title,
-      data:props.data,
+      folderName: props.title,
+      data: props.data,
     });
   })
   store.$patch((state) => {
@@ -96,6 +97,35 @@ function handleClick() {
   }
 }
 
+function pushNotification() {
+  Notification.requestPermission((res) => {
+    if (res !== 'granted') return
+    let notice = new Notification("title", {
+      body: 'body',
+      tag: '111',
+      icon: 'https://foruda.gitee.com/avatar/1676993386051995312/1867919_longsiyu_1599210190.png!avatar200',
+      image: 'https://foruda.gitee.com/avatar/1676993386051995312/1867919_longsiyu_1599210190.png!avatar200',
+      renotify: false,
+      requireInteraction: true,
+      silent: false,
+    })
+    notice.onshow = function () {
+      console.log('show')
+      setTimeout(notice.close.bind(notice), 5000)
+    }
+    notice.onclick = function () {
+      console.log('click')
+    }
+    notice.onclose = function () {
+      console.log('close')
+    }
+    notice.onerror = function () {
+      console.log('error')
+    }
+  })
+
+}
+
 
 
 </script>
@@ -113,10 +143,12 @@ function handleClick() {
   color: white;
   height: 100%;
 }
-.folder-card-section{
+
+.folder-card-section {
   height: 80%;
 }
-.folder-card-action{
+
+.folder-card-action {
   height: 20%;
 }
 </style>
