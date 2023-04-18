@@ -5,7 +5,6 @@ const db = {
   ver: 1
 }
 
-
 export default function createDBHelp (callback) {
   const help = dbCreateHelp({
     // dbFlag: 'project-meta-db',
@@ -17,14 +16,14 @@ export default function createDBHelp (callback) {
         index: {
           folderName: false,
           folderId: false,
-          folderAddDate:false,
-          folderModifiedDate:false,
-          linkName:false,
-          linkId:false,
-          linkUrl:false,
-          linkAddDate:false,
-          linkModifiedDate:false,
-          parentFolderId:false,
+          folderAddDate: false,
+          folderModifiedDate: false,
+          linkName: false,
+          linkId: false,
+          linkUrl: false,
+          linkAddDate: false,
+          linkModifiedDate: false,
+          parentFolderId: false
         },
         isClear: false
       }

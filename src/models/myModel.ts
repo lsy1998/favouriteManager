@@ -17,18 +17,6 @@ export interface item {
   parentFolderId?: string,
 }
 
-// export interface dbItem{
-//   folderName?:string,
-//   folderId?:number,
-//   parentFolderId?:number,
-//   folderAddDate?:Date,
-//   folderModifiedDate?:Date,
-//   linkName?:string,
-//   linkAddDate?:Date,
-//   linkModifiedDate?:Date,
-//   linkId?:number,
-//   linkUrl?:string,
-// }
 export interface dbItem {
   FOLDER_NAME?: string,
   FOLDER_ID?: number,
@@ -54,7 +42,7 @@ export interface edgeBookmark {
   type?: string,
   url?: string,
 }
-// !indexedDB FavouriteMasterData
+
 export interface dbFMDItem {
   id?: number,
   folderName?: string,
